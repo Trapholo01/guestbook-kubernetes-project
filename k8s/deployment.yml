@@ -1,24 +1,29 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: guestbook
+  name: guestbook-deployment
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       app: guestbook
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1
   template:
     metadata:
       labels:
         app: guestbook
     spec:
       containers:
-        - name: guestbook
-          image: us.icr.io/YOUR_NAMESPACE/guestbook:v1
-          ports:
-            - containerPort: 80
-          resources:
-            requests:
-              cpu: "5m"
-            limits:
-              cpu: "10m"
+      - name: guestbook
+        image: us.icr.io/<your-namespace>/guestbook:v1
+        ports:
+        - containerPort: 80
+        resources:
+          requests:
+            cpu: "100m"
+          limits:
+            cpu: "200m"
