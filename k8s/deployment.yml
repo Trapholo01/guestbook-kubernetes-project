@@ -17,9 +17,15 @@ spec:
       labels:
         app: guestbook
     spec:
+      # If using a private registry, uncomment and set imagePullSecrets:
+      # imagePullSecrets:
+      #   - name: my-registry-secret
       containers:
       - name: guestbook
-        image: us.icr.io/<your-namespace>/guestbook:v1
+        # Default for local clusters: use guestbook:v1 and ImagePullPolicy IfNotPresent.
+        # Replace with your IBM registry path if you prefer (e.g. us.icr.io/<your-namespace>/guestbook:v1).
+        image: guestbook:v1
+        imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 80
         resources:
@@ -27,3 +33,17 @@ spec:
             cpu: "100m"
           limits:
             cpu: "200m"
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 80
+          initialDelaySeconds: 5
+          periodSeconds: 10
+          failureThreshold: 3
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 80
+          initialDelaySeconds: 15
+          periodSeconds: 20
+          failureThreshold: 3
